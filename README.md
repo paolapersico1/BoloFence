@@ -1,2 +1,2 @@
 # BoloFence
- Activity-aware geoencing platform for Bologna
+ Activity-aware geofencing platform for Bologna
