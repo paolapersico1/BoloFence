@@ -1,3 +1,3 @@
-# Bolo Fence
-Bolo Fence is an Android Geofence Application.
+# BoloFence
+BoloFence is an Android Geofence Application.
 
