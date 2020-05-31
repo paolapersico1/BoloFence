@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">BoloFence</string>
+    <string name="preference_file_key">geosys_preferences</string>
+    <string name="saved_last_activity">Your last point of Interest</string>
+    <string name="urlKey">url</string>
+
+    <string name="channel_name_fservice">"fservice_notification_channel"</string>
+    <string name="channel_description_fservice">"fservice_notification_channel_description"</string>
+
+    <string name="channel_name">geofence_notification_channel</string>
+    <string name="channel_description">This is the channel notification for Bolo Fence application</string>
+
+    <string name="channel_name_activity_transition">activity_notification_channel</string>
+    <string name="channel_description_activity_transition">\"this channel is used to got notification on detect new activity transiction</string>
+
+    <string name="BackG_ON">Geofence service ON </string>
+    <string name="BackG_OFF">Geofence service OFF </string>
+    <string name="last_detected_geofence">Your last geofence \n</string>
+    <string name="channel_fservice_id">Fservice_notification_channel</string>
+    <string name="switchKey">sb_key</string>
+    <string name="pathIdTSKey">pathId_TS_Key</string>
+    <string name="pathIdKey">pathId_Key</string>
+    <string name="fabKey">fab_status_key</string>
+    <string name="isFirstStartKey">isFirstStartedKey</string>
+
+</resources>

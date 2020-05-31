@@ -1,0 +1,547 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="stylesheet" href="<?php echo base_url(); ?>assets/resources/ol.css">
+    <link rel="stylesheet" href="<?php echo base_url(); ?>assets/resources/fontawesome-all.min.css">
+    <link rel="stylesheet" href="<?php echo base_url(); ?>assets/resources/ol3-layerswitcher.css">
+    <link rel="stylesheet" href="<?php echo base_url(); ?>assets/resources/qgis2web.css">
+    <link rel="stylesheet" href="<?php echo base_url(); ?>assets/resources/loader.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <!-- ****** QGIS2WEB STYLE SETUP ****** -->
+    <style>
+      .search-layer {
+        top: 100px;
+        left: .5em;
+      }
+      .ol-touch .search-layer {
+        top: 130px;
+      }
+    </style>
+
+    <style>
+      html, body {
+          background-color: #ffffff;
+      }
+      .ol-control button {
+          background-color: #f8f8f8 !important;
+          color: #000000 !important;
+          border-radius: 0px !important;
+      }
+      .ol-zoom, .geolocate, .gcd-gl-control .ol-control {
+          background-color: rgba(255,255,255,.4) !important;
+          padding: 3px !important;
+      }
+      .ol-scale-line {
+          background: none !important;
+      }
+      .ol-scale-line-inner {
+          border: 2px solid #f8f8f8 !important;
+          border-top: none !important;
+          background: rgba(255, 255, 255, 0.5) !important;
+          color: black !important;
+      }
+    </style>
+
+    <style>
+      .tooltip {
+        position: relative;
+        background: rgba(0, 0, 0, 0.5);
+        border-radius: 4px;
+        color: white;
+        padding: 4px 8px;
+        opacity: 0.7;
+        white-space: nowrap;
+      }
+      .tooltip-measure {
+        opacity: 1;
+        font-weight: bold;
+      }
+      .tooltip-static {
+        background-color: #ffcc33;
+        color: black;
+        border: 1px solid white;
+      }
+      .tooltip-measure:before,
+      .tooltip-static:before {
+        border-top: 6px solid rgba(0, 0, 0, 0.5);
+        border-right: 6px solid transparent;
+        border-left: 6px solid transparent;
+        content: "";
+        position: absolute;
+        bottom: -6px;
+        margin-left: -7px;
+        left: 50%;
+      }
+      .tooltip-static:before {
+        border-top-color: #ffcc33;
+      }
+      .measure-control {
+        top: 65px;
+        left: .5em;
+      }
+      .ol-touch .measure-control {
+        top: 80px;
+      }
+    </style>
+    
+    <style>
+      html, body, #map {
+          width: 100%;
+          height: 100%;
+          padding: 0;
+          margin: 0;
+          overflow: hidden;
+      }
+    </style>
+
+    <style>
+      .btn {
+        box-shadow: none !important; 
+        outline: none !important;
+        box-shadow: 0 0 0 0;
+      }
+    </style>
+
+    <style>
+      .btn-outline-primary:hover, .btn-outline-success:hover, .btn-outline-danger:hover {
+        background-color:inherit;
+      }
+    </style>
+ 
+    <title> BoloFence </title>
+  </head>
+    
+
+
+<!-- ****** UI COMPONENTS ****** -->
+  <body>
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-dark bg-dark">
+      <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <div class="navbar-header" style="font-size:24px">
+           <a class="navbar-brand" style="font-size:20px; color:white"> BoloFence </a>
+        </div>
+        <li class="nav-item">
+          <a class="nav-link active" id="walk-tab" data-toggle="tab" href="#walk" role="tab" aria-controls="walk" aria-selected="true">
+            <i class='fas fa-walking' style='font-size:24px; color:#2b90fc'></i>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="bike-tab" data-toggle="tab" href="#bike" role="tab" aria-controls="bike" aria-selected="false" style="color:#2ca445">
+            <i class='fas fa-bicycle' style='font-size:24px'></i>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="car-tab" data-toggle="tab" href="#car" role="tab" aria-controls="car" aria-selected="false">
+            <i class='fas fa-car' style='font-size:24px; color:#db3444'></i>
+          </a>
+        </li>
+      </ul>
+      
+      <!-- Checkbox buttons group for each activity -->
+      <div class="tab-content" id="activity_layers">
+
+        <!-- Walk -->
+        <div class="tab-pane fade show active" id="walk" role="tabpanel" aria-labelledby="walk-tab">
+          <span style="float:left; padding-right: 20px; padding-top: 5px">
+            <img src="<?php echo base_url('assets/images/walk-layers-icon.svg');?>" style="width:24px;"></img>
+          </span>
+
+          <div class="btn-group-toggle" data-toggle="buttons" style="display: inline-block;">
+            <label class="btn btn-outline-primary">
+              <input type="checkbox" autocomplete="off" onchange="lyr_geofence_walk.setVisible(this.checked)"> Geofences
+            </label>
+            <label class="btn btn-outline-primary">
+              <input type="checkbox" autocomplete="off" onchange="lyr_path_walk_geom.setVisible(this.checked)"> Paths
+            </label>
+            <label class="btn btn-outline-primary">
+              <input type="checkbox" autocomplete="off" onchange="lyr_path_walk_arrival.setVisible(this.checked)"> Arrival points
+            </label>
+          </div>
+
+          <div style="display:inline-block; padding-right: 8px; padding-left: 5px">
+            <vl style="border-left: 1px solid white; height: 100%">
+          </div>
+
+          <div style="display:inline-block; float:right">
+            <!-- K-means (walk) -->
+            <div style="display:inline-block; float:left">
+              <div style="display:inline-block; float:left">
+                <div class="input-group">
+                  <select class="custom-select" id="clusters_num_walk" autocomplete="off">
+                    <!--<option selected>Clusters</option>-->
+                    <option value="2">2</option>
+                    <option value="3" selected>3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                  </select>
+                  <div class="input-group-append">
+                    <button type="button" class="btn btn-secondary" id="submit_kmeans_walk">K-means</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="btn-group-toggle" data-toggle="buttons" style="display:inline-block; float:right; padding-left:5px">
+                <label class="btn btn-outline-primary btn-circle">
+                  <i class="fas fa-eye" style='font-size:16px;'></i>
+                  <input type="checkbox" value="false" autocomplete="off" id="kmeans_walk_visibility">
+                </label>
+              </div>
+            </div>
+
+            <div style="display:inline-block; padding-right: 8px; padding-left: 8px; padding-top: 4px">
+              <vl style="border-left: 1px solid white; height: 100%">
+            </div>
+
+            <!-- Generate geofence (walk) -->
+            <div style="display:inline-clock; float:right"> 
+              <div style="display:inline-block; float:left">
+                <div class="input-group">
+                  <select class="custom-select" id="precision_generate_walk" autocomplete="off">
+                    <option value="0">0%</option>
+                    <option value="1">5%</option>
+                    <option value="2">10%</option>
+                    <option value="3">15%</option>
+                    <option value="4">20%</option>
+                    <option value="5" selected>25%</option>
+                    <option value="6">30%</option>
+                    <option value="7">35%</option>
+                    <option value="8">40%</option>
+                    <option value="9">45%</option>
+                    <option value="10">50%</option>
+                  </select>
+                  <div class="input-group-append">
+                    <button type="button" class="btn btn-secondary" id="submit_generate_walk">Generate</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="btn-group-toggle" data-toggle="buttons" style="display:inline-block; float:right; padding-left:5px">
+                <label class="btn btn-outline-primary btn-circle">
+                  <i class="fas fa-eye" style='font-size:16px;'></i>
+                  <input type="checkbox" value="false" autocomplete="off" id="new_geofence_walk_visibility">
+                </label>
+                <span style="padding-right:5px; padding-left:5px">
+                  <i data-content="Suggests the ideal area for a new geofence.<br /><br />
+                                    It uses <strong>DBSCAN</strong> algorithm, and the percentage you choose defines the 
+                                    <strong>percentile</strong> that is 
+                                    going to be applied to the list of the computed distances between paths.
+                                    The higher is the percentile the higher is gonna be the algorithm esp distance value.<br /><br />
+                                    <strong>[Recommended: 10% - 30%]</strong>"
+                    data-html="true"
+                    data-title="Generate tool"
+                    data-placement="bottom"
+                    class="fa fa-question-circle"
+                    style="color:white; font-size:14px"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bike -->
+        <div class="tab-pane fade" id="bike" role="tabpanel" aria-labelledby="bike-tab">
+          <span style="float:left; padding-right: 20px; padding-top: 5px">
+            <img src="<?php echo base_url('assets/images/bike-layers-icon.svg');?>" style="width:24px;"></img>
+          </span>
+
+          <div class="btn-group-toggle" data-toggle="buttons" style="display: inline-block;">
+            <label class="btn btn-outline-success">
+              <input type="checkbox" autocomplete="off" onchange="lyr_geofence_bike.setVisible(this.checked)"> Geofences
+            </label>
+            <label class="btn btn-outline-success">
+              <input type="checkbox" autocomplete="off" onchange="lyr_path_bike_geom.setVisible(this.checked)"> Paths
+            </label>
+            <label class="btn btn-outline-success">
+              <input type="checkbox" autocomplete="off" onchange="lyr_path_bike_arrival.setVisible(this.checked)"> Arrival points
+            </label>
+          </div>
+
+          <div style="display:inline-block; padding-right: 8px; padding-left: 5px">
+            <vl style="border-left: 1px solid white; height: 100%">
+          </div>
+ 
+          <div style="display:inline-block; float:right">
+            <!-- K-means (bike) -->
+            <div style="display:inline-block; float:left">
+              <div style="display:inline-block; float:left">
+                <div class="input-group">
+                  <select class="custom-select" id="clusters_num_bike" autocomplete="off">
+                    <!--<option selected>Clusters</option>-->
+                    <option value="2">2</option>
+                    <option value="3" selected>3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                  </select>
+                  <div class="input-group-append">
+                    <button type="button" class="btn btn-secondary" id="submit_kmeans_bike">K-means</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="btn-group-toggle" data-toggle="buttons" style="display:inline-block; float:right; padding-left:5px">
+                <label class="btn btn-outline-success">
+                  <i class="fas fa-eye" style='font-size:16px;'></i>
+                  <input type="checkbox" value="false" autocomplete="off" id="kmeans_bike_visibility">
+                </label>
+              </div>
+            </div>
+
+            <div style="display:inline-block; padding-right: 8px; padding-left: 8px; padding-top: 4px">
+              <vl style="border-left: 1px solid white; height: 100%">
+            </div>
+
+            <!-- Generate geofence (bike) -->
+            <div style="display:inline-clock; float:right"> 
+              <div style="display:inline-block; float:left">
+                <div class="input-group">
+                  <select class="custom-select" id="precision_generate_bike" autocomplete="off">
+                    <option value="0">0%</option>
+                    <option value="1">5%</option>
+                    <option value="2">10%</option>
+                    <option value="3">15%</option>
+                    <option value="4">20%</option>
+                    <option value="5" selected>25%</option>
+                    <option value="6">30%</option>
+                    <option value="7">35%</option>
+                    <option value="8">40%</option>
+                    <option value="9">45%</option>
+                    <option value="10">50%</option>
+                  </select>
+                  <div class="input-group-append">
+                    <button type="button" class="btn btn-secondary" id="submit_generate_bike">Generate</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="btn-group-toggle" data-toggle="buttons" style="display:inline-block; float:right; padding-left:5px">
+                <label class="btn btn-outline-success btn-circle">
+                  <i class="fas fa-eye" style='font-size:16px;'></i>
+                  <input type="checkbox" value="false" autocomplete="off" id="new_geofence_bike_visibility">
+                </label>
+                <span style="padding-right:5px; padding-left:5px">
+                  <i data-content="Suggests the ideal area for a new geofence.<br /><br />
+                                    It uses <strong>DBSCAN</strong> algorithm, and the percentage you choose defines the 
+                                    <strong>percentile</strong> that is 
+                                    going to be applied to the list of the computed distances between paths.
+                                    The higher is the percentile the higher is gonna be the algorithm esp distance value.<br /><br />
+                                    <strong>[Recommended: 10% - 30%]</strong>"
+                    data-html="true"
+                    data-title="Generate tool"
+                    data-placement="bottom"
+                    class="fa fa-question-circle"
+                    style="color:white; font-size:14px"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Car -->
+        <div class="tab-pane fade" id="car" role="tabpanel" aria-labelledby="car-tab">
+          <span style="float:left; padding-right: 20px; padding-top: 5px">
+            <img src="<?php echo base_url('assets/images/car-layers-icon.svg');?>" style="width:24px;"></img>
+          </span>
+
+          <div class="btn-group-toggle" data-toggle="buttons" style="display: inline-block;">
+            <label class="btn btn-outline-danger">
+              <input type="checkbox" autocomplete="off" onchange="lyr_geofence_car.setVisible(this.checked)"> Geofences
+            </label>
+            <label class="btn btn-outline-danger">
+              <input type="checkbox" autocomplete="off" onchange="lyr_path_car_geom.setVisible(this.checked)"> Paths
+            </label>
+            <label class="btn btn-outline-danger">
+              <input type="checkbox" autocomplete="off" onchange="lyr_path_car_arrival.setVisible(this.checked)"> Arrival points
+            </label>
+          </div>
+
+          <div style="display:inline-block; padding-right: 8px; padding-left: 5px">
+            <vl style="border-left: 1px solid white; height: 100%">
+          </div>
+ 
+          <div style="display:inline-block; float:right">
+            <!-- K-means (car) -->
+            <div style="display:inline-block; float:left">
+              <div style="display:inline-block; float:left">
+                <div class="input-group">
+                  <select class="custom-select" id="clusters_num_car" autocomplete="off">
+                    <!--<option selected>Clusters</option>-->
+                    <option value="2">2</option>
+                    <option value="3" selected>3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                  </select>
+                  <div class="input-group-append">
+                    <button type="button" class="btn btn-secondary" id="submit_kmeans_car">K-means</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="btn-group-toggle" data-toggle="buttons" style="display:inline-block; float:right; padding-left:5px">
+                <label class="btn btn-outline-danger">
+                  <i class="fas fa-eye" style='font-size:16px;'></i>
+                  <input type="checkbox" value="false" autocomplete="off" id="kmeans_car_visibility">
+                </label>
+              </div>
+            </div>
+
+            <div style="display:inline-block; padding-right: 8px; padding-left: 8px; padding-top: 4px">
+              <vl style="border-left: 1px solid white; height: 100%">
+            </div>
+
+            <!-- Generate geofence (car) -->
+            <div style="display:inline-clock; float:right"> 
+              <div style="display:inline-block; float:left">
+                <div class="input-group">
+                  <select class="custom-select" id="precision_generate_car" autocomplete="off">
+                    <option value="0">0%</option>
+                    <option value="1">5%</option>
+                    <option value="2">10%</option>
+                    <option value="3">15%</option>
+                    <option value="4">20%</option>
+                    <option value="5" selected>25%</option>
+                    <option value="6">30%</option>
+                    <option value="7">35%</option>
+                    <option value="8">40%</option>
+                    <option value="9">45%</option>
+                    <option value="10">50%</option>
+                  </select>
+                  <div class="input-group-append">
+                    <button type="button" class="btn btn-secondary" id="submit_generate_car">Generate</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="btn-group-toggle" data-toggle="buttons" style="display:inline-block; float:right; padding-left:5px">
+                <label class="btn btn-outline-danger">
+                  <i class="fas fa-eye" style='font-size:16px;'></i>
+                  <input type="checkbox" value="false" autocomplete="off" id="new_geofence_car_visibility">
+                </label>
+                <span style="padding-right:5px; padding-left:5px">
+                  <i data-content="Suggests the ideal area for a new geofence.<br /><br />
+                                    It uses <strong>DBSCAN</strong> algorithm, and the percentage you choose defines the 
+                                    <strong>percentile</strong> that is 
+                                    going to be applied to the list of the computed distances between paths.
+                                    The higher is the percentile the higher is gonna be the algorithm esp distance value.<br /><br />
+                                    <strong>[Recommended: 10% - 30%]</strong>"
+                    data-html="true"
+                    data-title="Generate tool"
+                    data-placement="bottom"
+                    class="fa fa-question-circle"
+                    style="color:white; font-size:14px"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+    
+    <div id="map">
+        <div id="popup" class="ol-popup">
+            <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+            <!-- popup on geofence/points click -->
+            <div id="popup-content"></div>
+        </div>
+    </div>
+
+    <!-- Preloader -->
+    <div class="loader-wrapper" style="position:absolute; z-index:10">
+        <span class="loader"><span class="loader-inner"></span></span>
+    </div>
+
+  </body>
+</html>
+
+<!-- ****** SOURCES ****** -->
+<!-- jQuery CDN -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<!-- fontawesome CDN -->
+<script src='https://kit.fontawesome.com/a076d05399.js'></script>
+<!-- Ajax CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<!-- Bootstrap CDN -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<!-- Base URL path -->
+<script type='text/javascript'>
+  var baseURL= "<?php echo base_url();?>";
+</script>
+<!-- Tooltip trigger function -->
+<script>
+  $(function () {
+    $('.fa').popover({trigger: "hover"});
+  })
+</script>
+
+<!-- Works without qgis2web_expressions and polyfills. Uncomment if needed -->
+<!--<script src="<?php echo base_url('assets/resources/qgis2web_expressions.js');?>"></script>-->
+<!--<script src="<?php echo base_url('assets/resources/polyfills.js');?>"></script>-->
+
+<script src="<?php echo base_url('assets/resources/functions.js');?>"></script>
+<script src="<?php echo base_url('assets/resources/ol.js');?>"></script>
+
+<!-- Uncomment to active default qgis2web layer switcher -->
+<!--<script src="<?php echo base_url('assets/resources/ol3-layerswitcher.js');?>"></script>-->
+
+<!-- Layers list (FROM CONTROLLER) -->
+<script>
+  var json_geofence_car = <?php echo $json_geofence_car;?>;
+  var json_path_car_geom = <?php echo $json_path_car_geom;?>;
+  var json_path_car_arrival = <?php echo $json_path_car_arrival;?>;
+  var json_geofence_bike = <?php echo $json_geofence_bike;?>;
+  var json_path_bike_geom = <?php echo $json_path_bike_geom;?>;
+  var json_path_bike_arrival = <?php echo $json_path_bike_arrival;?>;
+  var json_geofence_walk = <?php echo $json_geofence_walk;?>;
+  var json_path_walk_geom = <?php echo $json_path_walk_geom;?>;
+  var json_path_walk_arrival = <?php echo $json_path_walk_arrival;?>;
+</script>
+<script src="<?php echo base_url('assets/layers/kmeans.js');?>"></script>
+<script src="<?php echo base_url('assets/layers/new_geofence.js');?>"></script>
+<!-- end -->
+
+<!-- Style list (FROM JS)-->
+<script src="<?php echo base_url('assets/styles/geofence_car_style.js');?>"></script>
+<script src="<?php echo base_url('assets/styles/path_car_geom_style.js');?>"></script>
+<script src="<?php echo base_url('assets/styles/path_car_arrival_style.js');?>"></script>
+<script src="<?php echo base_url('assets/styles/geofence_bike_style.js');?>"></script>
+<script src="<?php echo base_url('assets/styles/path_bike_geom_style.js');?>"></script>
+<script src="<?php echo base_url('assets/styles/path_bike_arrival_style.js');?>"></script>
+<script src="<?php echo base_url('assets/styles/geofence_walk_style.js');?>"></script>
+<script src="<?php echo base_url('assets/styles/path_walk_geom_style.js');?>"></script>
+<script src="<?php echo base_url('assets/styles/path_walk_arrival_style.js');?>"></script>
+<script src="<?php echo base_url('assets/styles/kmeans_cluster_style.js');?>"></script>
+<script src="<?php echo base_url('assets/styles/kmeans_point_style.js');?>"></script>
+<script src="<?php echo base_url('assets/styles/new_geofence_style.js');?>"></script>
+<!-- end -->
+<script src="<?php echo base_url('assets/layers/layers.js');?>"></script>
+<script src="<?php echo base_url('assets/resources/qgis2web.js');?>"></script>
+<script src="<?php echo base_url('assets/resources/Autolinker.min.js');?>"></script>
+
+<!-- Fade out the page-loader -->
+<script>
+  window.addEventListener('load', function() {
+    $(".loader-wrapper").fadeOut("slow");
+  });
+</script>
+
