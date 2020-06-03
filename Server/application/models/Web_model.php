@@ -221,21 +221,21 @@ Class Web_Model extends CI_Model
                 ORDER BY distance ASC, P1.id ASC);
                 CREATE INDEX ON optimal_points(geom);"); 
 
-        // Percentile(x) on closest points distance in order to automatically choose esp value
+        // Percentile(x) on closest points distance in order to automatically choose eps value
         $sql = ("SELECT percentile_cont(?)
-                    WITHIN GROUP (ORDER BY OP.distance) AS esp
+                    WITHIN GROUP (ORDER BY OP.distance) AS eps
                     FROM optimal_points OP");
-        $esp_sql = $this->db->query($sql, [$percentile]);
-        $row = $esp_sql->result_array();
-        $esp = $row[0]['esp'];        
+        $eps_sql = $this->db->query($sql, [$percentile]);
+        $row = $eps_sql->result_array();
+        $eps = $row[0]['eps'];        
         
         // DBSCAN on closest points
 		$sql = ("CREATE VIEW dbs_paths AS (
 				SELECT ST_ClusterDBSCAN(OP.geom, eps:=?, minpoints:=1) OVER() AS cid,
 				    OP.geom AS geom
                 FROM optimal_points OP
-                WHERE OP.distance < 0.008)");
-        $dbs_paths = $this->db->query($sql, [$esp]);
+                WHERE OP.distance < ?)");
+        $dbs_paths = $this->db->query($sql, [$eps, $eps+0.0001]);
 
         // Polygon from clusters
 		$dbs_paths_union = $this->db->query("CREATE VIEW dbs_paths_union AS (

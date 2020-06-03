@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/resources/qgis2web.css">
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/resources/loader.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="icon" type="image/png" href="<?php echo base_url(); ?>assets/images/logo.png" sizes="32x32">
 
     <!-- ****** QGIS2WEB STYLE SETUP ****** -->
     <style>
@@ -125,7 +126,10 @@
     <nav class="navbar navbar-dark bg-dark">
       <ul class="nav nav-tabs" id="myTab" role="tablist">
         <div class="navbar-header" style="font-size:24px">
-           <a class="navbar-brand" style="font-size:20px; color:white"> BoloFence </a>
+           <a class="navbar-brand" style="font-size:20px; color:white">
+             <img src="<?php echo base_url('assets/images/logo_lessBG.png');?>" style="width:28px;"></img>
+             <span style="padding-left: 2px; padding-right: 10px; font-weight: 500;"> BoloFence </span>
+           </a>
         </div>
         <li class="nav-item">
           <a class="nav-link active" id="walk-tab" data-toggle="tab" href="#walk" role="tab" aria-controls="walk" aria-selected="true">
@@ -237,7 +241,7 @@
                                     It uses <strong>DBSCAN</strong> algorithm, and the percentage you choose defines the 
                                     <strong>percentile</strong> that is 
                                     going to be applied to the list of the computed distances between paths.
-                                    The higher is the percentile the higher is gonna be the algorithm esp distance value.<br /><br />
+                                    The higher is the percentile the higher is gonna be the algorithm eps distance value.<br /><br />
                                     <strong>[Recommended: 10% - 30%]</strong>"
                     data-html="true"
                     data-title="Generate tool"
@@ -340,7 +344,7 @@
                                     It uses <strong>DBSCAN</strong> algorithm, and the percentage you choose defines the 
                                     <strong>percentile</strong> that is 
                                     going to be applied to the list of the computed distances between paths.
-                                    The higher is the percentile the higher is gonna be the algorithm esp distance value.<br /><br />
+                                    The higher is the percentile the higher is gonna be the algorithm eps distance value.<br /><br />
                                     <strong>[Recommended: 10% - 30%]</strong>"
                     data-html="true"
                     data-title="Generate tool"
@@ -443,7 +447,7 @@
                                     It uses <strong>DBSCAN</strong> algorithm, and the percentage you choose defines the 
                                     <strong>percentile</strong> that is 
                                     going to be applied to the list of the computed distances between paths.
-                                    The higher is the percentile the higher is gonna be the algorithm esp distance value.<br /><br />
+                                    The higher is the percentile the higher is gonna be the algorithm eps distance value.<br /><br />
                                     <strong>[Recommended: 10% - 30%]</strong>"
                     data-html="true"
                     data-title="Generate tool"
