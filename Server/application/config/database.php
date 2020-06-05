@@ -75,10 +75,10 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	   => '',
-	'hostname' => 'ec2-176-34-97-213.eu-west-1.compute.amazonaws.com',
-	'username' => 'wvngghkjbtxggr',
-	'password' => '4bd4aeb8f5bcf9da96c92f4f210dcbddf3c5cb6750a48f814855f7a746f60ba5',
-	'database' => 'dekeqa6lvq2s12',
+	'hostname' => '',
+	'username' => '',
+	'password' => '',
+	'database' => '',
 	'dbdriver' => 'postgre',
 	'dbprefix' => '',
 	'pconnect' => FALSE,
