@@ -62,8 +62,8 @@ var map = new ol.Map({
     overlays: [overlayPopup],
     layers: layersList,
     view: new ol.View({
-			maxZoom: 28, 
-			minZoom: 1,
+			maxZoom: 25, 
+			minZoom: 5,
 			center: ol.proj.fromLonLat([11.342616, 44.494888]), // Bologna center
 			zoom: 15
     })
