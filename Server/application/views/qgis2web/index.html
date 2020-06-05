@@ -126,7 +126,7 @@
     <nav class="navbar navbar-dark bg-dark">
       <ul class="nav nav-tabs" id="myTab" role="tablist">
         <div class="navbar-header" style="font-size:24px">
-           <a class="navbar-brand" style="font-size:20px; color:white">
+           <a class="navbar-brand" id="logo" style="font-size:20px; color:white; cursor: pointer">
              <img src="<?php echo base_url('assets/images/logo_lessBG.png');?>" style="width:28px;"></img>
              <span style="padding-left: 2px; padding-right: 10px; font-weight: 500;"> BoloFence </span>
            </a>
@@ -541,6 +541,13 @@
 <script src="<?php echo base_url('assets/layers/layers.js');?>"></script>
 <script src="<?php echo base_url('assets/resources/qgis2web.js');?>"></script>
 <script src="<?php echo base_url('assets/resources/Autolinker.min.js');?>"></script>
+
+<!-- Reload page on logo click -->
+<script>
+  $("#logo").click(function(){
+    window.location.reload();
+  });
+</script>
 
 <!-- Fade out the page-loader -->
 <script>
