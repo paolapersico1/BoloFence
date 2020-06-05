@@ -36,10 +36,7 @@ Class Web_Model extends CI_Model
 										)
 									)
 								)
-							   FROM (
-								SELECT *
-								FROM geofences.geofence_$activity
-								) AS GF");
+								FROM geofences.geofence_$activity GF");
 
 			// Paths 
 			$query_path = $this->db->query("SELECT json_build_object(
@@ -51,11 +48,8 @@ Class Web_Model extends CI_Model
 										)
 									)
 								)
-							   FROM (
-								SELECT *
-								FROM paths.path_$activity
-								WHERE geom IS NOT NULL
-								) AS P");
+								FROM paths.path_$activity P
+								WHERE P.geom IS NOT NULL");
 
 			// Arrival points
 			$query_arrival = $this->db->query("SELECT json_build_object(
