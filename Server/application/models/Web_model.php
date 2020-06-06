@@ -228,8 +228,8 @@ Class Web_Model extends CI_Model
 				SELECT ST_ClusterDBSCAN(OP.geom, eps:=?, minpoints:=1) OVER() AS cid,
 				    OP.geom AS geom
                 FROM optimal_points OP
-                WHERE OP.distance < ?)");
-        $dbs_paths = $this->db->query($sql, [$eps, $eps+0.0001]);
+                WHERE OP.distance <= ?)");
+        $dbs_paths = $this->db->query($sql, [$eps, $eps]);
 
         // Polygon from clusters
 		$dbs_paths_union = $this->db->query("CREATE VIEW dbs_paths_union AS (
