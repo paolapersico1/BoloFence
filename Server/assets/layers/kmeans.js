@@ -104,7 +104,6 @@ $(document).ready(function(){
     }
     var k = $('#clusters_num_car').val();
     var activity = 'car';
-    var size = json_path_walk_geom.features.length;
     
     // check if k > arrival points
     if (k > size){
