@@ -126,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
                     isFirstStart = false;
                     saveFirstStartOnSharedPreferences(isFirstStart);
                 }else{
-                    Toast.makeText(this, " TRAKING SERVICE ALREADY IN EXECUTION IT WILL BE NO TRIGGERED AGAIN",Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(this, " TRAKING SERVICE ALREADY IN EXECUTION IT WILL BE NO TRIGGERED AGAIN",Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "SERVICE ALREADY IN EXECUTION IT WILL BE NO TRIGGERED AGAIN = "+isFirstStart);
                 }
 
