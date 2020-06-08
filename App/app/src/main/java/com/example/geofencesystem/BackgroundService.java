@@ -471,6 +471,7 @@ public class BackgroundService extends Service implements GoogleApiClient.Connec
     }
 
     private void makeTheJob() {
+        
         if(mGoogleApiClient.isConnected()){
             Location newLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
             if(newLocation!= null){
@@ -511,16 +512,16 @@ public class BackgroundService extends Service implements GoogleApiClient.Connec
 
         if(!isFourDigit){
             //Log.d(TAG, "checking on 3 digit ");
-            latOne = roundToThreeDigit(one.getLatitude());
-            latTwo = roundToThreeDigit(two.getLatitude());
-            lngOne = roundToThreeDigit(one.getLongitude());
-            lngTwo = roundToThreeDigit(two.getLongitude());
+            latOne = truncateToThreeDigit(one.getLatitude());
+            latTwo = truncateToThreeDigit(two.getLatitude());
+            lngOne = truncateToThreeDigit(one.getLongitude());
+            lngTwo = truncateToThreeDigit(two.getLongitude());
         }else{
             //Log.d(TAG, "checking on 4 digit ");
-            latOne = roundToFourDigit(one.getLatitude());
-            latTwo = roundToFourDigit(two.getLatitude());
-            lngOne = roundToFourDigit(one.getLongitude());
-            lngTwo = roundToFourDigit(two.getLongitude());
+            latOne = truncateToFourDigit(one.getLatitude());
+            latTwo = truncateToFourDigit(two.getLatitude());
+            lngOne = truncateToFourDigit(one.getLongitude());
+            lngTwo = truncateToFourDigit(two.getLongitude());
         }
 
         boolean latEqual = (latOne == latTwo );
@@ -534,12 +535,12 @@ public class BackgroundService extends Service implements GoogleApiClient.Connec
         double d = coordinate;
 
         if(roundToFourDecimal){
-            Log.d(TAG,"Round to 4 decimal ");
-            return ""+roundToFourDigit(d);
+            Log.d(TAG,"Truncate to 4 decimal ");
+            return ""+truncateToFourDigit(d);
         }
 
-        Log.d(TAG,"Round to 3+1r decimal ");
-        double x = roundToThreeDigit(d);
+        Log.d(TAG,"Truncate to 3+1r decimal ");
+        double x = truncateToThreeDigit(d);
         x= x * 10000;
         long seed = System.currentTimeMillis();
         int y = new Random(seed).nextInt(10); //it generats random number between 0 and 9
@@ -548,10 +549,10 @@ public class BackgroundService extends Service implements GoogleApiClient.Connec
         //back to double format !! the 0s are lost on division by 10000  ==> //String s = ""+x+""+y; //double z = Double.valueOf(s) ;
     }
 
-    private double roundToThreeDigit(double x){
+    private double truncateToThreeDigit(double x){
         return Math.floor(x * 1000) / 1000; //rount to third digit
     }
-    private double roundToFourDigit(double x){
+    private double truncateToFourDigit(double x){
         return Math.floor(x * 10000) / 10000; //rount to third digit
     }
 
